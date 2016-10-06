@@ -4,30 +4,44 @@
  * @author: Graham Matthews
  * @version. 0.1
  */
-//package MH;
+//package MH; this was for the MHI program
 import java.util.Scanner;
 public class Monty_Hall{
 	public static void main(String[] args){
-		//init();
-		boolean door1=true;
-		boolean door2=true;
-		boolean door3=true;
-		boolean[] doors={door1, door2, door3};
-		int userSwitch;
-		int user;
-		int len=0;
-		boolean stay;
-		int[] values = {0, 0};
 		int[] results = {0, 0};
-		int revealed;
-		int usable;
+		boolean result;
+		int len=0;
 		Scanner keyboard = new Scanner(System.in);
-		
 		if (args.length!=0){
 			len=Integer.parseInt(args[0]);
 		}
+		for (int i=0; i<=len; i++){
+			result=run(len, keyboard);
+			if (result==true){
+				results[0]+=1;
+			}
+			else{
+				results[1]+=1;
+			}
+		}
+		if (len!=0){
+			System.out.println(round(results[0]*100.0/len) + "% switch");
+			System.out.println(round(results[1]*100.0/len) + "% stay");
+		}
+	}
+	public static boolean run(int len, Scanner keyboard){
+		// initializing all the variables needed to run the simulation mode
+		boolean door1=true;
+		boolean door2=true;
+		boolean door3=true;
+		int userSwitch;
+		int user;
+		boolean stay;
+		int[] values = {0, 0};
+		int revealed;
+		int usable;
 		
-		for (int j=0; j<len+1; j++){
+		// This is assigning the doors values, two falses and a true
 		door1= (rand(2)==1);
 		if (door1==true){
 			door2 = false;
@@ -38,34 +52,22 @@ public class Monty_Hall{
 			door3=(door2==false);
 		}
 		
-		doors[0]=door1;
-		doors[1]=door2;
-		doors[2]=door3;
+		boolean doors[] = {door1, door2, door3};
+		
+		//gets the user's door choice, if the program is in interactive mode
 		if (len==0){
 			user=getUserDoor(keyboard);
 		}
 		else{
 			user=rand(3);
 		}
+		
+		//eliminates a door, so the user can choose to switch
 		values= elimDoor(doors, user, len);
 		revealed=values[0];
 		usable=values[1];
 		
-		/*
-		if (door1==false && door1!=user){
-			System.out.println("Door 1 had a goat behind it!");
-			int doorUsed=1;
-		}
-		else if (door2==false && door2!=user){
-			System.out.println("Door 2 had a goat behind it!");
-			int doorUsed=2;
-		}
-		else{
-			System.out.println("Door 3 had a goat behind it!");
-			int doorUsed=3;
-		}
-		
-		*/
+		// gets the user's choice, switch or not, if the program is in interactive mode
 		if (len==0){
 			stay=getUserSwitch(doors, user, usable, keyboard);
 		}
@@ -77,31 +79,32 @@ public class Monty_Hall{
 			for (int i=0; i<3; i++){
 				if (!(i==user || i==revealed)){
 					userSwitch=i;
-				}
-				
-				
+				}	
 			}
 		}
 		else{
 			userSwitch=user;
 		}
+		
 		if (doors[userSwitch]==true){
 			if (len==0){
 				System.out.println("You won a car!");
 			}
-			results[0]+=1;
+			return true;
 		}
 		else{
 			if (len==0){
 				System.out.println("You won a goat!");
 			}
-			results[1]+=1;
+			return false;
 		}
-		}
+		//}
+		/*
 		if(len!=0){
 			System.out.println((results[0]*100)/len + "% switch");
 			System.out.println((results[1]*100)/len + "% stay");
 		}
+		*/
 		//return false;
 	}
 	
@@ -126,6 +129,7 @@ public class Monty_Hall{
 	*/
 	/**
 	 * creates a random int, 0 or 1
+	 * @param change the range of the random numbers, 0 to change-1
 	 * @return a random int, 0 or 1
 	 */
 	 
@@ -182,5 +186,16 @@ public class Monty_Hall{
 			stay=false;
 		}
 		return stay;
+	}
+	
+	/**
+	 * rounds any numbers to the hundredths place
+	 * @param numIn the number to round
+	 * @return the rounded number
+	 */
+	 
+	public static double round (double numIn){
+		double inter=(numIn*100) + .5;
+		return ((int)inter)/100.00;
 	}
 }
