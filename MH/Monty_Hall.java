@@ -4,29 +4,52 @@
  * @author: Graham Matthews
  * @version. 0.1
  */
-package MH;
+//package MH;
 import java.util.Scanner;
 public class Monty_Hall{
-	public static boolean run(int user, boolean stay){
+	public static void main(String[] args){
 		//init();
-		boolean door2;
-		boolean door3;
+		boolean door1=true;
+		boolean door2=true;
+		boolean door3=true;
+		boolean[] doors={door1, door2, door3};
+		int userSwitch;
+		int user;
+		int len=0;
+		boolean stay;
+		int[] values = {0, 0};
+		int[] results = {0, 0};
+		int revealed;
+		int usable;
 		Scanner keyboard = new Scanner(System.in);
-		boolean door1= (rand()==1);
+		
+		if (args.length!=0){
+			len=Integer.parseInt(args[0]);
+		}
+		
+		for (int j=0; j<len+1; j++){
+		door1= (rand(2)==1);
 		if (door1==true){
 			door2 = false;
 			door3 = false;
 		}
 		else{
-			door2=(rand()==1);
+			door2=(rand(2)==1);
 			door3=(door2==false);
 		}
 		
-		boolean[] doors={door1, door2, door3};
-		//int user=getUserDoor(keyboard);
-		int[] values= elimDoor(doors, user);
-		int revealed=values[0];
-		int usable=values[1];
+		doors[0]=door1;
+		doors[1]=door2;
+		doors[2]=door3;
+		if (len==0){
+			user=getUserDoor(keyboard);
+		}
+		else{
+			user=rand(3);
+		}
+		values= elimDoor(doors, user, len);
+		revealed=values[0];
+		usable=values[1];
 		
 		/*
 		if (door1==false && door1!=user){
@@ -43,9 +66,13 @@ public class Monty_Hall{
 		}
 		
 		*/
-		
-		//boolean stay=getUserSwitch(doors, user, usable, keyboard);
-		int userSwitch=-1;
+		if (len==0){
+			stay=getUserSwitch(doors, user, usable, keyboard);
+		}
+		else{
+			stay=false;
+		}
+		userSwitch=-1;
 		if (stay==false){
 			for (int i=0; i<3; i++){
 				if (!(i==user || i==revealed)){
@@ -59,12 +86,21 @@ public class Monty_Hall{
 			userSwitch=user;
 		}
 		if (doors[userSwitch]==true){
-			//System.out.println("You won a car!");
-			return true;
+			if (len==0){
+				System.out.println("You won a car!");
+			}
+			results[0]+=1;
 		}
 		else{
-			//System.out.println("You won a goat!");
-			return false;
+			if (len==0){
+				System.out.println("You won a goat!");
+			}
+			results[1]+=1;
+		}
+		}
+		if(len!=0){
+			System.out.println((results[0]*100)/len + "% switch");
+			System.out.println((results[1]*100)/len + "% stay");
 		}
 		//return false;
 	}
@@ -93,8 +129,8 @@ public class Monty_Hall{
 	 * @return a random int, 0 or 1
 	 */
 	 
-	public static int rand(){
-		double inter = Math.random()*2;
+	public static int rand(int change){
+		double inter = Math.random()*change;
 		return (int)inter;
 	}
 	/** 
@@ -115,14 +151,16 @@ public class Monty_Hall{
 	 * @return the revealed door
 	 */
 	
-	public static int[] elimDoor(boolean[] doors, int user){
+	public static int[] elimDoor(boolean[] doors, int user, int len){
 		for (int i=0; i<3; i++){
 			if (doors[i]==false && i!=user){
 				int usable=0;
 				while (usable==user || usable==i){
 					usable++;
 				}
-				//System.out.println("Door " + (int)(i+1) + " had a goat behind it!");
+				if (len==0){
+					System.out.println("Door " + (int)(i+1) + " had a goat behind it!");
+				}
 				int[] values={i, usable};
 				return values;
 			}
